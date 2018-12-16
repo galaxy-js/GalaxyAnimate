@@ -25,7 +25,6 @@ export default class AnimateDirective extends GalaxyDirective {
     const { onAdd, onRemove } = this.animate.resolve(this.name)
 
     // TODO: handle `this` context
-    console.log(this.$element.replaceWith)
 
     // Decorate add
     if (onAdd) {
