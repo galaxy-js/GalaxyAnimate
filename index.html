@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Testing GalaxyAnimate</title>
+  </head>
+  <body>
+    <animated-element></animated-element>
+
+    <script type="module">
+      import { setup, html, GalaxyElement } from 'https://cdn.jsdelivr.net/gh/LosMaquios/GalaxyJS/dist/galaxy.esm.js'
+      import { AnimateDirective, GalaxyAnimate } from './src/index.js'
+
+      class AnimatedElement extends GalaxyElement {
+        static get template () {
+          return html`
+            <h1 *animate="fade" *if="show">Hi or bye?</h1>
+            <button @click="show = !show">Toggle</button>
+          `
+        }
+
+        constructor () {
+          super()
+
+          this.state = {
+            show: true
+          }
+        }
+      }
+
+      setup({
+        root: AnimatedElement,
+        directives: [
+          AnimateDirective
+        ],
+        plugins: {
+
+          // Plugin name should be `$animate`
+          $animate: new GalaxyAnimate({
+            fadeIn: {
+              onAdd: {
+                keyframes: [
+                  { opacity: 0 },
+                  { opacity: 1 }
+                ],
+                duration: 300
+              }
+            },
+            fadeOut: {
+              onRemove: {
+                keyframes: [
+                  { opacity: 1 },
+                  { opacity: 0 }
+                ],
+                duration: 300
+              }
+            },
+            fade: {
+              onAdd: 'fadeIn',
+              onRemove: 'fadeOut'
+            }
+          })
+        }
+      })
+    </script>
+  </body>
+</html>
