@@ -14,7 +14,10 @@
       class AnimatedElement extends GalaxyElement {
         static get template () {
           return html`
-            <h1 *animate="fade" *if="show">Hi or bye?</h1>
+            <h1
+              *animate="fade" *if="show"
+              @animatestart="console.log('Start animation:', $event)"
+              @animateend="console.log('End animation:', $event)">Hi or bye?</h1>
             <button @click="show = !show">Toggle</button>
           `
         }

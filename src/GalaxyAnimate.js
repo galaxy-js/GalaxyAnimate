@@ -1,4 +1,5 @@
 import GalaxyAnimateError from './GalaxyAnimateError.js'
+import AnimateEvent from './AnimateEvent.js'
 
 export default class GalaxyAnimate {
   constructor (animations) {
@@ -11,7 +12,14 @@ export default class GalaxyAnimate {
       animationHook.duration || animationHook.options
     )
 
-    return new Promise(resolve => animationEffect.addEventListener('finish', resolve))
+    return new Promise(resolve => {
+      $element.dispatchEvent(new AnimateEvent('animatestart', $element, animationEffect))
+
+      animationEffect.addEventListener('finish', () => {
+        $element.dispatchEvent(new AnimateEvent('animateend', $element, animationEffect))
+        resolve()
+      })
+    })
   }
 
   resolve (animation) {
