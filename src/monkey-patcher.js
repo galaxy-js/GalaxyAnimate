@@ -12,10 +12,11 @@ Node.prototype.replaceChild = function (newChild, oldChild) {
 
 function handleSwitch (parentNode, oldChild, newChild) {
   const refNode = oldChild.nextSibling
-  const ret = oldChild.remove()
 
-  if (ret instanceof Promise) {
-    return ret.then(() => {
+  oldChild.remove()
+
+  if (oldChild.__galaxyRemoveAnimated__) {
+    return oldChild.addEventListener('animateend', _ => {
       parentNode.insertBefore(newChild, refNode)
     })
   }

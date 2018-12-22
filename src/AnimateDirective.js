@@ -60,6 +60,9 @@ export default class AnimateDirective extends GalaxyDirective {
       const { remove } = $element
       const that = this
 
+      // Mark aniamted element
+      $element.__galaxyRemoveAnimated__ = true
+
       $element.remove = function () {
         return that.animate
           .animate($element, onRemove)
