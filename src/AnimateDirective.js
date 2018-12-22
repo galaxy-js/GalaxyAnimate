@@ -16,67 +16,60 @@ export default class AnimateDirective extends GalaxyDirective {
     this.animate = this.$scope.$animate
     this.name = this.$value // <- animation name
 
-    this._decorateElement()
+    this._patchElement()
   }
 
-  _decorateElement () {
+  _patchElement () {
     const { $element } = this
     const { parentNode } = $element
     const { onAdd, onRemove } = this.animate.resolve(this.name)
 
-    // TODO: handle `this` context
-
-    // Decorate add
+    // Patch add
     if (onAdd) {
-      const append = parentNode.append.bind(parentNode)
-      const prepend = parentNode.prepend.bind(parentNode)
-      const appendChild = parentNode.appendChild.bind(parentNode)
-      const insertBefore = parentNode.insertBefore.bind(parentNode)
+      const { append, prepend, appendChild, insertBefore } = parentNode
 
-      const add = (addFn, node) => {
-        addFn(node)
+      const add = (context, addFn, node) => {
+        addFn.call(context, node)
 
         if (node === $element) {
           this.animate.animate($element, onAdd)
         }
       }
 
-      parentNode.appendChild = node => {
-        add(appendChild, node)
+      parentNode.append = function (...nodes) {
+        nodes.forEach(node => add(this, append, node))
       }
 
-      parentNode.append = (...nodes) => {
-        nodes.forEach(node => add(append, node))
+      parentNode.prepend = function (...nodes) {
+        nodes.forEach(node => add(this, prepend, node))
       }
 
-      parentNode.prepend = (...nodes) => {
-        nodes.forEach(node => add(prepend, node))
+      parentNode.appendChild = function (node) {
+        add(this, appendChild, node)
       }
 
-      parentNode.insertBefore = (newChild, refNode) => {
-        add(node => insertBefore(node, refNode), newChild)
+      parentNode.insertBefore = function (newChild, refNode) {
+        add(this, function (node) {
+          insertBefore.call(this, node, refNode)
+        }, newChild)
       }
     }
 
-    // Decorate remove
+    // Patch remove
     if (onRemove) {
-      const remove = $element.remove.bind($element)
-      const removeChild = parentNode.removeChild.bind(parentNode)
+      const { remove } = $element
+      const that = this
 
-      const animateRemove = remove => {
-        return this.animate.animate($element, onRemove).then(remove)
+      $element.remove = function () {
+        return that.animate
+          .animate($element, onRemove)
+          .then(() => { remove.call(this) })
       }
 
-      $element.remove = () => {
-        return animateRemove(remove)
-      }
-
-      parentNode.removeChild = child => {
-        if (child === $element) {
-          animateRemove(remove)
-        } else {
-          removeChild(child)
-        }
+      parentNode.removeChild = function (child) {
+        // Here we delegate removing to the `remove` decorated method
+        // for correct handling animation
+        child.remove()
       }
     }
   }

@@ -6,8 +6,8 @@ Element.prototype.replaceWith = function (newChild) {
   handleSwitch(this.parentNode, this, newChild)
 }
 
-Node.prototype.replaceChild = (newChild, oldChild) => {
-  handleSwitch(oldChild.parentNode, oldChild, newChild)
+Node.prototype.replaceChild = function (newChild, oldChild) {
+  handleSwitch(this, oldChild, newChild)
 }
 
 function handleSwitch (parentNode, oldChild, newChild) {
