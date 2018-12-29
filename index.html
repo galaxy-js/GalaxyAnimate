@@ -9,7 +9,7 @@
 
     <script type="module">
       import { setup, html, GalaxyElement } from 'https://cdn.jsdelivr.net/gh/LosMaquios/GalaxyJS/dist/galaxy.esm.js'
-      import { AnimateDirective, GalaxyAnimate } from './src/index.js'
+      import GalaxyAnimatePlugin from './src/index.js'
 
       class AnimatedElement extends GalaxyElement {
         static get template () {
@@ -33,13 +33,8 @@
 
       setup({
         root: AnimatedElement,
-        directives: [
-          AnimateDirective
-        ],
-        plugins: {
-
-          // Plugin name should be `$animate`
-          $animate: new GalaxyAnimate({
+        plugins: [
+          GalaxyAnimatePlugin.with({
             fadeIn: {
               onAdd: {
                 keyframes: [
@@ -63,7 +58,7 @@
               onRemove: 'fadeOut'
             }
           })
-        }
+        ]
       })
     </script>
   </body>

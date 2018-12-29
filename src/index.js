@@ -1,12 +1,28 @@
+import { GalaxyPlugin } from 'https://cdn.jsdelivr.net/gh/LosMaquios/GalaxyJS/dist/galaxy.esm.js'
+
 // Patch elements
 import './monkey-patcher.js'
 
-/**
- * Export directive
- */
-export { default as AnimateDirective } from './AnimateDirective.js'
+import AnimateDirective from './AnimateDirective.js'
+import GalaxyAnimate from './GalaxyAnimate.js'
 
 /**
- * Export plugin class
+ * Export main classes
  */
-export { default as GalaxyAnimate } from './GalaxyAnimate.js'
+export { AnimateDirective, GalaxyAnimate }
+
+/**
+ * Export plugin
+ */
+export default class GalaxyAnimatePlugin extends GalaxyPlugin {
+  static init ({ directives }) {
+    this.$animate = new GalaxyAnimate(this.$options)
+
+    // Install directive
+    directives.push(AnimateDirective)
+  }
+
+  static install (GalaxyElement) {
+    GalaxyElement.prototype.$animate = this.$animate
+  }
+}
