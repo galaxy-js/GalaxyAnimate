@@ -27,13 +27,8 @@ class AnimatedElement extends GalaxyElement {
 
 setup({
   root: AnimatedElement,
-  directives: [
-    AnimateDirective
-  ],
-  plugins: {
-
-    // Plugin name should be `$animate`
-    $animate: new GalaxyAnimate({
+  plugins: [
+    GalaxyAnimate.with({
       fadeIn: {
         onAdd: {
           keyframes: [
@@ -57,7 +52,7 @@ setup({
         onRemove: 'fadeOut'
       }
     })
-  }
+  ]
 })
 ```
 
